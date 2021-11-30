@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
-    password: {
+    hash_password: {
       type: String,
       required: true,
     },
@@ -46,5 +46,9 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+userSchema.statics.hasPassword = function(passwordClear){
+  return bcrypt.hash(passwordClear,10);
+
+}
  
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model('User', userSchema);
