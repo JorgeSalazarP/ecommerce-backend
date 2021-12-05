@@ -2,6 +2,8 @@
 
 const User = require('../models/User');
 const shortid = require('shortid');
+const jwt = require ('jsonwebtoken');
+const { restart } = require('nodemon');
 
 exports.signup = async (req, res, next) => {
     try {
@@ -33,10 +35,18 @@ exports.singin = async (req, res,next) =>{
         const { email, password } = req.body;
         const user = await User.findOne({ email });
         if(!user || !(await user.comparePassword(password))){
-            return res.status(400).json({
+            return res.status(401).json({
                 error: "Invalid credentials"
             });
         }
+
+        jwt.sign({ _id:user._id },process.env.JWT_SECRET,{ expiresIn:'2h' },(err,jwtToken)=>{
+            if(err){
+                next(err);
+                return;
+            }
+            res.json({jwtToken: jwtToken});
+        });
 
     } catch (err) {
         next(err);
