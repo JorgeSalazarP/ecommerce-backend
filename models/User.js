@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
       unique: true,
+      index:true,
       lowercase: true,
     },
     email: {
@@ -29,6 +30,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
       unique: true,
+      index:true,
       lowercase: true,
     },
     hash_password: {
@@ -48,7 +50,10 @@ const userSchema = new mongoose.Schema(
 
 userSchema.statics.hasPassword = function(passwordClear){
   return bcrypt.hash(passwordClear,10);
+}
 
+userSchema.methods.comparePassword = function(passwordClear){
+  return bcrypt.compare(passwordClear,this.hash_password);
 }
  
 module.exports = mongoose.model('User', userSchema);
