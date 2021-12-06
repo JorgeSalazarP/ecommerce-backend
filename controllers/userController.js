@@ -10,9 +10,10 @@ exports.signup = async (req, res, next) => {
         const { email, password, firstName, lastName } = req.body;
         const user = await User.findOne({ email });
         if(user){
-            return res.status(400).json({
-                error: "User already registered",
-            });
+            const error = new Error('User already registered');
+            error.status = 401;
+            next(error);
+            return;
         }
         const hash_password = await User.hasPassword(password);
         const _user = new User({
@@ -35,9 +36,10 @@ exports.singin = async (req, res,next) =>{
         const { email, password } = req.body;
         const user = await User.findOne({ email });
         if(!user || !(await user.comparePassword(password))){
-            return res.status(401).json({
-                error: "Invalid credentials"
-            });
+            const error = new Error('Invalid credentials');
+            error.status = 401;
+            next(error);
+            return;
         }
 
         jwt.sign({ _id:user._id },process.env.JWT_SECRET,{ expiresIn:'2h' },(err,jwtToken)=>{
