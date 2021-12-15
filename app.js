@@ -21,6 +21,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use('/api', require('./routes/users'));
+app.use('/api/admin', require('./routes/admin/admins'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -30,13 +31,11 @@ app.use(function(req, res, next) {
 // error handler
 app.use(function(err, req, res, next) {
 
-  //comprobramos que sea un error de validación
-
- // es un error de validación?
+ // validation error
   if (err.array) {
-  const errorInfo = err.array({ onlyFirstError: true })[0];
-  err.message = `Not valid - ${errorInfo.param} ${errorInfo.msg}`;
-  err.status = 422;
+    const errorInfo = err.array({ onlyFirstError: true })[0];
+    err.message = `Not valid - ${errorInfo.param} ${errorInfo.msg}`;
+    err.status = 422;
   }
   
   // render the error page
