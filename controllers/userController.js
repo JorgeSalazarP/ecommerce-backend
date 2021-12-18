@@ -8,7 +8,6 @@ const { validationResult } = require('express-validator');
 
 exports.signup = async (req, res, next) => {
     try {
-        validationResult(req).throw();
         const { email, password, firstName, lastName } = req.body;
         const user = await User.findOne({ email });
         if(user){
@@ -25,8 +24,8 @@ exports.signup = async (req, res, next) => {
             hash_password,
             username: shortid.generate()
         });
-        const createdUser = await _user.save();
-        res.status(201).json({result: createdUser});
+        const userCreated = await _user.save();
+        res.status(201).json({result: userCreated});
     } catch (err) {
         next(err);
     }
